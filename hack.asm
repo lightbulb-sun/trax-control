@@ -1,5 +1,6 @@
 ROTATION                    equ $c93e
 DIRECTION                   equ $c9f2
+MULTIGAME_DIRECTION         equ $dcd2
 HELD_BUTTONS                equ $ff98
 BUTTON_A                    equ $01
 CUR_POWERUP                 equ $c9ca
@@ -31,6 +32,25 @@ SECTION "west", ROMX[$4270], BANK[1]
         call    set_direction_and_rotate
 SECTION "northwest", ROMX[$4277], BANK[1]
         call    set_direction_and_rotate
+
+SECTION "multigame_unbind_a_button_for_rotation", ROMX[$4162], BANK[1]
+        nop
+SECTION "multigame_north", ROM0[$300d]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_northeast", ROM0[$3014]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_east", ROM0[$301b]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_southeast", ROM0[$3022]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_south", ROM0[$3029]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_southwest", ROM0[$3030]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_west", ROM0[$3037]
+        call    multigame_set_direction_and_rotate
+SECTION "multigame_northwest", ROM0[$303e]
+        call    multigame_set_direction_and_rotate
 
 SECTION "gain_powerup", ROMX[$4e40], BANK[1]
         call    draw_powerup_icon
@@ -80,6 +100,11 @@ set_direction_and_rotate::
         ld      a, c
         ld      [ROTATION], a
         ret
+
+multigame_set_direction_and_rotate::
+        ; replace original instruction
+        ld      [MULTIGAME_DIRECTION], a
+        jp      set_direction_and_rotate.check_for_a_button_press
 
 level_loading::
         ld      a, [CUR_POWERUP]
